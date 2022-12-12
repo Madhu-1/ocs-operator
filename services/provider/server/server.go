@@ -546,13 +546,13 @@ func (s *OCSProviderServer) GetStorageClassClaimConfig(ctx context.Context, req 
 	// Verify Status.Phase
 	msg := fmt.Sprintf("storage class claim %q for %q is in %q phase", req.StorageClassClaimName, req.StorageConsumerUUID, storageClassClaim.Status.Phase)
 	klog.Info(msg)
-	if storageClassClaim.Status.Phase != ocsv1alpha1.StorageClassClaimReady {
+	if storageClassClaim.Status.Phase != ocsv1alpha1.FulfillStorageClassClaimReady {
 		switch storageClassClaim.Status.Phase {
-		case ocsv1alpha1.StorageClassClaimFailed:
+		case ocsv1alpha1.FulfillStorageClassClaimFailed:
 			return nil, status.Error(codes.Internal, msg)
-		case ocsv1alpha1.StorageClassClaimInitializing:
+		case ocsv1alpha1.FulfillStorageClassClaimInitializing:
 			return nil, status.Error(codes.Unavailable, msg)
-		case ocsv1alpha1.StorageClassClaimCreating:
+		case ocsv1alpha1.FulfillStorageClassClaimCreating:
 			return nil, status.Error(codes.Unavailable, msg)
 		case "":
 			return nil, status.Errorf(codes.Unavailable, "status is not set for storage class claim %q for %q", req.StorageClassClaimName, req.StorageConsumerUUID)
@@ -648,8 +648,9 @@ func (s *OCSProviderServer) GetStorageClassClaimConfig(ctx context.Context, req 
 				Name: "cephfs",
 				Kind: "StorageClass",
 				Data: mustMarshal(map[string]string{
-					"clusterID": getSubVolumeGroupClusterID(subVolumeGroup),
-					"fsName":    subVolumeGroup.Spec.FilesystemName,
+					"clusterID":          getSubVolumeGroupClusterID(subVolumeGroup),
+					"subvolumegroupname": subVolumeGroup.Name,
+					"fsName":             subVolumeGroup.Spec.FilesystemName,
 					"csi.storage.k8s.io/provisioner-secret-name":       provisionerCephClientSecret,
 					"csi.storage.k8s.io/node-stage-secret-name":        nodeCephClientSecret,
 					"csi.storage.k8s.io/controller-expand-secret-name": provisionerCephClientSecret,

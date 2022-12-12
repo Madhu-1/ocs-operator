@@ -1,13 +1,13 @@
-# permissions for end users to edit storageclassclaims.
+# permissions for end users to edit fulfillstorageclassclaims.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: storageclassclaim-editor-role
+  name: fulfillstorageclassclaim-editor-role
 rules:
 - apiGroups:
   - ocs.openshift.io
   resources:
-  - storageclassclaims
+  - fulfillstorageclassclaims
   verbs:
   - create
   - delete
@@ -19,6 +19,6 @@ rules:
 - apiGroups:
   - ocs.openshift.io
   resources:
-  - storageclassclaims/status
+  - fulfillstorageclassclaims/status
   verbs:
   - get

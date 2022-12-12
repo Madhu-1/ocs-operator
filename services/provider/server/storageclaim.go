@@ -64,7 +64,7 @@ func (s *storageClassClaimManager) Create(
 	consumerUUID := string(consumer.GetUID())
 	generatedClaimName := getStorageClassClaimName(consumerUUID, storageClassClaimName)
 
-	storageClassClaimObj := &ocsv1alpha1.StorageClassClaim{
+	storageClassClaimObj := &ocsv1alpha1.FulfillStorageClassClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      generatedClaimName,
 			Namespace: s.namespace,
@@ -73,7 +73,7 @@ func (s *storageClassClaimManager) Create(
 				storageClassClaimNameLabel:    storageClassClaimName,
 			},
 		},
-		Spec: ocsv1alpha1.StorageClassClaimSpec{
+		Spec: ocsv1alpha1.FulfillStorageClassClaimSpec{
 			Type:             claimType,
 			EncryptionMethod: encryptionMethod,
 			StorageProfile:   storageProfile,
@@ -103,7 +103,7 @@ func (s *storageClassClaimManager) Create(
 		if !kerrors.IsAlreadyExists(err) {
 			return fmt.Errorf("failed to create a StorageClassClaim named %q for consumer %q and claim %q. %w", generatedClaimName, consumerUUID, storageClassClaimName, err)
 		}
-		newStorageClassClaimObj := &ocsv1alpha1.StorageClassClaim{}
+		newStorageClassClaimObj := &ocsv1alpha1.FulfillStorageClassClaim{}
 		getErr := s.client.Get(ctx, client.ObjectKey{Name: generatedClaimName, Namespace: s.namespace}, newStorageClassClaimObj)
 		if getErr != nil {
 			klog.Errorf("failed to get a StorageClassClaim named %q for consumer %q and claim %q. %v", generatedClaimName, consumerUUID, storageClassClaimName, getErr)
@@ -130,7 +130,7 @@ func (s *storageClassClaimManager) Create(
 // and consumerUUID.
 func (s *storageClassClaimManager) Delete(ctx context.Context, consumerUUID, storageClassClaimName string) error {
 	generatedClaimName := getStorageClassClaimName(consumerUUID, storageClassClaimName)
-	storageClassClaimObj := &ocsv1alpha1.StorageClassClaim{
+	storageClassClaimObj := &ocsv1alpha1.FulfillStorageClassClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      generatedClaimName,
 			Namespace: s.namespace,
@@ -156,9 +156,9 @@ func (s *storageClassClaimManager) Delete(ctx context.Context, consumerUUID, sto
 
 // Get returns the storageClassClaim resource using storageClassClaimName
 // and consumerUUID.
-func (s *storageClassClaimManager) Get(ctx context.Context, consumerUUID, storageClassClaimName string) (*ocsv1alpha1.StorageClassClaim, error) {
+func (s *storageClassClaimManager) Get(ctx context.Context, consumerUUID, storageClassClaimName string) (*ocsv1alpha1.FulfillStorageClassClaim, error) {
 	generatedClaimName := getStorageClassClaimName(consumerUUID, storageClassClaimName)
-	storageClassClaimObj := &ocsv1alpha1.StorageClassClaim{}
+	storageClassClaimObj := &ocsv1alpha1.FulfillStorageClassClaim{}
 	err := s.client.Get(ctx, types.NamespacedName{Name: generatedClaimName, Namespace: s.namespace}, storageClassClaimObj)
 	if err != nil {
 		klog.Errorf("failed to get a StorageClassClaim named %q for consumer %q and claim %q. %v", generatedClaimName, consumerUUID, storageClassClaimName, err)

@@ -1,0 +1,65 @@
+#!/bin/bash
+
+REGISTRY_NAMESPACE=${REGISTRY_NAMESPACE:-'madhupr001'}
+IMAGE_REGISTRY=${IMAGE_REGISTRY:-'docker.io'}
+IMAGE_TAG=${IMAGE_TAG:-'latest'}
+export IMAGE_BUILD_CMD=docker
+export IMAGE_REGISTRY=docker.io
+
+printCommand () {
+    colour="\e[01;32m"
+    nocolour="\e[0m"
+    echo -e "$colour""$ ""$@" "$nocolour"
+}
+
+runCommand () {
+    printCommand "$@"
+    "$@"
+    if [ $? -ne 0 ]; then
+        echo $@ failed to run
+        exit 1
+    fi
+}
+
+build () {
+    runCommand make gen-latest-csv
+
+    runCommand make ocs-operator
+    runCommand docker push docker.io/$REGISTRY_NAMESPACE/ocs-operator:$IMAGE_TAG
+
+    runCommand make operator-bundle
+    runCommand docker push docker.io/$REGISTRY_NAMESPACE/ocs-operator-bundle:$IMAGE_TAG
+
+    runCommand make operator-index
+    runCommand docker push docker.io/$REGISTRY_NAMESPACE/ocs-operator-index:$IMAGE_TAG
+
+    runCommand make  ocs-metrics-exporter
+    runCommand docker push docker.io/$REGISTRY_NAMESPACE/ocs-metrics-exporter:$IMAGE_TAG
+}
+
+create () {
+    runCommand sed -i "s/ocs-dev\/ocs-registry:latest/$REGISTRY_NAMESPACE\/ocs-operator-index:$IMAGE_TAG/" ./deploy/deploy-with-olm.yaml
+    runCommand oc create -f ./deploy/deploy-with-olm.yaml
+}
+
+delete () {
+    runCommand oc delete catalogsource/ocs-catalogsource -n openshift-marketplace
+    runCommand oc delete namespace openshift-storage
+}
+
+runCommand export REGISTRY_NAMESPACE="$REGISTRY_NAMESPACE"
+runCommand export IMAGE_TAG="$IMAGE_TAG"
+
+
+if [ -z "$1" ]; then
+    build
+    create
+elif [ "$1" == "build" ]; then
+    build
+elif [ "$1" == "create" ]; then
+    create
+elif [ "$1" == "delete" ]; then
+    delete
+else
+    echo "$1" is unknown command
+fi

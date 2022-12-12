@@ -1,36 +1,35 @@
 domain: openshift.io
-layout: go.kubebuilder.io/v2
+layout:
+- go.kubebuilder.io/v2
+plugins:
+  go.sdk.operatorframework.io/v2-alpha: {}
 projectName: ocs-operator
 repo: github.com/red-hat-storage/ocs-operator
 resources:
--
-  controller: true
+- controller: true
   domain: openshift.io
   group: ocs
   kind: OCSInitialization
   path: github.com/red-hat-storage/ocs-operator/api/v1
   version: v1
--
-  controller: true
+- controller: true
   domain: openshift.io
   group: ocs
   kind: StorageCluster
   path: github.com/red-hat-storage/ocs-operator/api/v1
   version: v1
--
-  controller: true
+- controller: true
   domain: openshift.io
   group: ocs
   kind: StorageConsumer
   path: github.com/red-hat-storage/ocs-operator/api/v1alpha1
   version: v1alpha1
--
+- api:
+    crdVersion: v1beta1
   controller: true
   domain: openshift.io
   group: ocs
-  kind: StorageClassClaim
+  kind: FulfillStorageClassClaim
   path: github.com/red-hat-storage/ocs-operator/api/v1alpha1
   version: v1alpha1
 version: "3"
-plugins:
-  go.sdk.operatorframework.io/v2-alpha: {}

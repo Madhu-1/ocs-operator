@@ -1419,7 +1419,7 @@ metadata:
       \   }\n\t"
     operatorframework.io/suggested-namespace: openshift-storage
     operators.operatorframework.io/builder: operator-sdk-v1.19.0+git
-    operators.operatorframework.io/internal-objects: '["ocsinitializations.ocs.openshift.io","storageclassclaims.ocs.openshift.io","storageconsumers.ocs.openshift.io","cephclusters.ceph.rook.io","cephobjectstores.ceph.rook.io","cephobjectstoreusers.ceph.rook.io","cephnfses.ceph.rook.io","cephclients.ceph.rook.io","cephfilesystems.ceph.rook.io","cephfilesystemmirrors.ceph.rook.io","cephrbdmirrors.ceph.rook.io","cephobjectrealms.ceph.rook.io","cephobjectzonegroups.ceph.rook.io","cephobjectzones.ceph.rook.io","cephbucketnotifications.ceph.rook.io","cephbuckettopics.ceph.rook.io","cephfilesystemsubvolumegroups.ceph.rook.io","cephblockpoolradosnamespaces.ceph.rook.io"]'
+    operators.operatorframework.io/internal-objects: '["fulfillstorageclassclaims.ocs.openshift.io","ocsinitializations.ocs.openshift.io","storageconsumers.ocs.openshift.io","cephclusters.ceph.rook.io","cephobjectstores.ceph.rook.io","cephobjectstoreusers.ceph.rook.io","cephnfses.ceph.rook.io","cephclients.ceph.rook.io","cephfilesystems.ceph.rook.io","cephfilesystemmirrors.ceph.rook.io","cephrbdmirrors.ceph.rook.io","cephobjectrealms.ceph.rook.io","cephobjectzonegroups.ceph.rook.io","cephobjectzones.ceph.rook.io","cephbucketnotifications.ceph.rook.io","cephbuckettopics.ceph.rook.io","cephfilesystemsubvolumegroups.ceph.rook.io","cephblockpoolradosnamespaces.ceph.rook.io"]'
     operators.operatorframework.io/operator-type: non-standalone
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v2
     repository: https://github.com/red-hat-storage/ocs-operator
@@ -1436,17 +1436,18 @@ spec:
     enabled: false
   customresourcedefinitions:
     owned:
+    - description: FulfillStorageClassClaim is the Schema for the fulfillstorageclassclaims
+        API
+      displayName: Fulfill Storage Class Claim
+      kind: FulfillStorageClassClaim
+      name: fulfillstorageclassclaims.ocs.openshift.io
+      version: v1alpha1
     - description: OCS Initialization represents the initial data to be created when
         the OCS operator is installed.
       displayName: OCS Initialization
       kind: OCSInitialization
       name: ocsinitializations.ocs.openshift.io
       version: v1
-    - description: StorageClassClaim is the Schema for the storageclassclaims API
-      displayName: Storage Class Claim
-      kind: StorageClassClaim
-      name: storageclassclaims.ocs.openshift.io
-      version: v1alpha1
     - description: Storage Cluster represents a OpenShift Container Storage Cluster
         including Ceph Cluster, NooBaa and all the storage and compute resources required.
       displayName: Storage Cluster
@@ -1850,7 +1851,7 @@ spec:
         - apiGroups:
           - ocs.openshift.io
           resources:
-          - storageclassclaims
+          - fulfillstorageclassclaims
           verbs:
           - create
           - delete
@@ -1862,7 +1863,7 @@ spec:
         - apiGroups:
           - ocs.openshift.io
           resources:
-          - storageclassclaims/status
+          - fulfillstorageclassclaims/status
           verbs:
           - get
           - patch
@@ -2751,12 +2752,12 @@ spec:
                 - name: NOOBAA_DB_IMAGE
                   value: centos/postgresql-12-centos7
                 - name: PROVIDER_API_SERVER_IMAGE
-                  value: quay.io/ocs-dev/ocs-operator:latest
+                  value: docker.io/madhupr001/ocs-operator:latest
                 - name: OPERATOR_NAMESPACE
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.namespace
-                image: quay.io/ocs-dev/ocs-operator:latest
+                image: docker.io/madhupr001/ocs-operator:latest
                 imagePullPolicy: Always
                 name: ocs-operator
                 readinessProbe:
@@ -2829,7 +2830,7 @@ spec:
                 - name: ROOK_CSI_ALLOW_UNSUPPORTED_VERSION
                   value: "true"
                 - name: ROOK_CSIADDONS_IMAGE
-                  value: quay.io/csiaddons/k8s-sidecar:v0.5.0
+                  value: docker.io/csiaddons/k8s-sidecar:v0.5.0
                 - name: CSI_ENABLE_METADATA
                   value: "false"
                 - name: CSI_CLUSTER_NAME
@@ -2922,7 +2923,7 @@ spec:
                 - --namespaces=openshift-storage
                 command:
                 - /usr/local/bin/metrics-exporter
-                image: quay.io/ocs-dev/ocs-metrics-exporter:latest
+                image: docker.io/madhupr001/ocs-metrics-exporter:latest
                 name: ocs-metrics-exporter
                 ports:
                 - containerPort: 8080
@@ -3212,10 +3213,10 @@ spec:
     name: rook-container
   - image: quay.io/ceph/ceph:v17
     name: ceph-container
-  - image: quay.io/csiaddons/k8s-sidecar:v0.5.0
+  - image: docker.io/csiaddons/k8s-sidecar:v0.5.0
     name: csiaddons-sidecar
-  - image: quay.io/ocs-dev/ocs-must-gather:latest
+  - image: docker.io/madhupr001/ocs-must-gather:latest
     name: ocs-must-gather
-  - image: quay.io/ocs-dev/ocs-metrics-exporter:latest
+  - image: docker.io/madhupr001/ocs-metrics-exporter:latest
     name: ocs-metrics-exporter
   version: 4.12.0

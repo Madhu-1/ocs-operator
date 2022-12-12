@@ -34,13 +34,6 @@ import (
 	apiv2 "github.com/operator-framework/api/pkg/operators/v2"
 	"github.com/operator-framework/operator-lib/conditions"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
-	ocsv1 "github.com/red-hat-storage/ocs-operator/api/v1"
-	ocsv1alpha1 "github.com/red-hat-storage/ocs-operator/api/v1alpha1"
-	"github.com/red-hat-storage/ocs-operator/controllers/ocsinitialization"
-	"github.com/red-hat-storage/ocs-operator/controllers/storageclassclaim"
-	"github.com/red-hat-storage/ocs-operator/controllers/storagecluster"
-	controllers "github.com/red-hat-storage/ocs-operator/controllers/storageconsumer"
-	"github.com/red-hat-storage/ocs-operator/controllers/util"
 	cephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -59,6 +52,14 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/cache"
 	apiclient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+
+	ocsv1 "github.com/red-hat-storage/ocs-operator/api/v1"
+	ocsv1alpha1 "github.com/red-hat-storage/ocs-operator/api/v1alpha1"
+	"github.com/red-hat-storage/ocs-operator/controllers/fulfillstorageclassclaim"
+	"github.com/red-hat-storage/ocs-operator/controllers/ocsinitialization"
+	"github.com/red-hat-storage/ocs-operator/controllers/storagecluster"
+	controllers "github.com/red-hat-storage/ocs-operator/controllers/storageconsumer"
+	"github.com/red-hat-storage/ocs-operator/controllers/util"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -177,13 +178,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&storageclassclaim.StorageClassClaimReconciler{
+	if err = (&fulfillstorageclassclaim.FulfillStorageClassClaimReconciler{
 		Cache:             mgr.GetCache(),
 		Client:            mgr.GetClient(),
 		Scheme:            mgr.GetScheme(),
 		OperatorNamespace: operatorNamespace,
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "StorageClassClaim")
+		setupLog.Error(err, "unable to create controller", "controller", "FulfillStorageClassClaim")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder

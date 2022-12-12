@@ -1,0 +1,6 @@
+apiVersion: ocs.openshift.io/v1alpha1
+kind: FulfillStorageClassClaim
+metadata:
+  name: fulfillstorageclassclaim-sample
+spec:
+  # TODO(user): Add fields here
